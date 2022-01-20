@@ -1,14 +1,36 @@
 from discord.ext import commands
 import discord
 import os, database_functions, tip
+from dotenv import load_dotenv
 
-bot = commands.Bot(command_prefix='$')
+load_dotenv()
+
+bot_intents = discord.Intents.all()
+
+bot = commands.Bot(command_prefix='$', intents=bot_intents)
 
 db = database_functions.init_db()
 
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
+    print(bot.guilds)
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game(name="Facilitating your Tips"))
+
+@bot.event
+async def on_guild_join(guild): #when the bot joins a new server, this is invoked 
+    print("we joined a server!\n")
+    print(f"{guild.id=}\t{guild.name=}\n")
+    print(f"the member list is:\n")
+    for member in guild.members:
+        if member.bot:
+            continue
+        print(f"{member.id}\t{member.name} #{member.discriminator}")
+    print("\n")
+
+    #want to create wallet for all the IDs that are not currently in the DB
+    #(OPTIONAL) store the IDs and member info in a separate table for whatever reason
+
 
 @bot.command()
 async def tip(context, payee:discord.Member, amount:int, token:str):
@@ -34,4 +56,4 @@ async def tip(context, payee:discord.Member, amount:int, token:str):
 
 
 
-bot.run('')
+bot.run(os.getenv('BOT_TOKEN'))
