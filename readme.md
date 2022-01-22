@@ -4,9 +4,11 @@ This will be a tip bot I hope
 
 ## Installation
 
-For all python libraries run: pip3 install -r requirements.txt
+For all python libraries run: 
+  `pip3 install -r requirements.txt`
 
-For a local database run: docker run --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+For a local database run: 
+  `docker run --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres`
 
 ## Usage
 
