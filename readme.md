@@ -13,6 +13,10 @@ To run in docker:
 Then attach your shell to the tipbot docker container. In vscode in the docker extension right click the tip-bot container and select attach shell. Otherwise run
   
   `docker exec -it tipbot /bin/bash`
+  
+ To stop runing the docker containers run:
+   
+   `docker-compose down`
 
 ## Usage
 
