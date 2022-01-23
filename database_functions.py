@@ -5,8 +5,8 @@ from dotenv import dotenv_values
 config = dotenv_values(".env")
 
 def init_db():
-    #engine = create_engine('postgresql://postgres:'+config['ZOE_POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
-    engine = create_engine('postgresql://postgres:'+config['JEFF_POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
+    engine = create_engine('postgresql://postgres:postgres@localhost:5432/dev_tip_bot_db')
+    # engine = create_engine('postgresql://postgres:'+config['JEFF_POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
 
 
     if not database_exists(engine.url):
@@ -33,13 +33,13 @@ def add_user_db(discord_id, private_key, db):
     with db.connect() as connection:
         #https://code-maven.com/slides/python/sqlalchemy-engine-insert
         connection.execute(
-            text("INSERT INTO Secrets (user_id, private_key) VALUES (:user_id, :private_key)"),
+            text("INSERT INTO secrets (user_id, private_key) VALUES (:user_id, :private_key)"),
             [{"user_id": str(discord_id), "private_key": str(private_key)}]
         )
 def get_user_db(discord_id, db):
     with db.connect() as connection:
         results = connection.execute(
-                    text("SELECT * FROM Secrets where user_id = :user_id" ),
+                    text("SELECT * FROM secrets where user_id = :user_id" ),
                     [{"user_id": str(discord_id)}]
                   )
 
@@ -48,19 +48,24 @@ def get_user_db(discord_id, db):
 def delete_user_db(discord_id, db):
     with db.connect() as connection:
         connection.execute(
-            text("DELETE FROM Secrets where user_id = :user_id" ),
+            text("DELETE FROM secrets where user_id = :user_id" ),
             [{"user_id": str(discord_id)}]
         )
 
 def get_all_user(db):
     with db.connect() as connection:
         results = connection.execute(
-            text("SELECT * FROM Secrets")
+            text("SELECT * FROM secrets")
         )
     return results.all()
 
+<<<<<<< HEAD
 db = init_db()
 #add_user_db(423205229723516948, config['0x61178E17Fac681a16eF47ed4B3527B95357b7D09'], db) already added
+=======
+# db = init_db()
+# add_user_db(423205229723516948, config['0x61178E17Fac681a16eF47ed4B3527B95357b7D09'], db)
+>>>>>>> df64feaec0fb11f86768e79846ca73e790b07533
 # userInfo = get_user_db(423205229723516948, db)
 # print(userInfo)
 allUserInfo = get_all_user(db)

@@ -1,0 +1,6 @@
+web3
+discord.py
+sqlalchemy
+python-dotenv
+sqlalchemy_utils
+psycopg2
