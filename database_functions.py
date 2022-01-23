@@ -5,8 +5,7 @@ from dotenv import dotenv_values
 config = dotenv_values(".env")
 
 def init_db():
-    #engine = create_engine('postgresql://postgres:'+config['ZOE_POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
-    engine = create_engine('postgresql://postgres:'+config['JEFF_POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
+    engine = create_engine('postgresql://postgres:'+config['POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
 
 
     if not database_exists(engine.url):
