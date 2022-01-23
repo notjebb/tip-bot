@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: tipbot
+    volumes:
+      - ./:/home/devUser/dev/tip-bot
+    ports:
+      - 5000:5000
+    env_file:
+      - ./.env
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    stdin_open: true
+    tty: true 
+
+  postgres:
+    image: postgres:13-alpine
+    container_name: postgres
+    volumes:
+    # uncomment this line if you want to seed the database with a dump
+      # - ./database.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dev_tip_bot_db
+
+volumes:
+  postgres_data:

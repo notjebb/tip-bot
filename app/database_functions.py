@@ -2,12 +2,10 @@ from sqlalchemy import create_engine, text, Table, Column, String, MetaData, ins
 from sqlalchemy_utils import database_exists, create_database
 from dotenv import dotenv_values
 
-config = dotenv_values(".env")
+config = dotenv_values("../.env")
 
 def init_db():
-    engine = create_engine('postgresql://postgres:postgres@localhost:5432/dev_tip_bot_db')
-    # engine = create_engine('postgresql://postgres:'+config['JEFF_POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
-
+    engine = create_engine('postgresql://postgres:postgres@postgres:5432/dev_tip_bot_db')
 
     if not database_exists(engine.url):
         create_database(engine.url)
@@ -38,12 +36,17 @@ def add_user_db(discord_id, private_key, db):
         )
 def get_user_db(discord_id, db):
     with db.connect() as connection:
+        
         results = connection.execute(
                     text("SELECT * FROM secrets where user_id = :user_id" ),
                     [{"user_id": str(discord_id)}]
-                  )
-
-    return results.all()[0] #should only return one tuple in a list
+                  ).all()
+    if(len(results) > 0):
+        print("user hase been found!")
+        return results[0] #should only return one tuple in a list
+    else:
+        print("No user hase been found!")
+        return False
 
 def delete_user_db(discord_id, db):
     with db.connect() as connection:
@@ -59,13 +62,9 @@ def get_all_user(db):
         )
     return results.all()
 
-<<<<<<< HEAD
 db = init_db()
 #add_user_db(423205229723516948, config['0x61178E17Fac681a16eF47ed4B3527B95357b7D09'], db) already added
-=======
-# db = init_db()
 # add_user_db(423205229723516948, config['0x61178E17Fac681a16eF47ed4B3527B95357b7D09'], db)
->>>>>>> df64feaec0fb11f86768e79846ca73e790b07533
 # userInfo = get_user_db(423205229723516948, db)
 # print(userInfo)
 allUserInfo = get_all_user(db)

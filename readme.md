@@ -4,11 +4,19 @@ This will be a tip bot I hope
 
 ## Installation
 
-For all python libraries run: 
-  `pip3 install -r requirements.txt`
+To run in docker:
 
-For a local database run: 
-  `docker run --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres`
+  `docker-compose build`
+  
+  `docker-compose up -d`
+  
+Then attach your shell to the tipbot docker container. In vscode in the docker extension right click the tip-bot container and select attach shell. Otherwise run
+  
+  `docker exec -it tipbot /bin/bash`
+  
+ To stop runing the docker containers run:
+   
+   `docker-compose down`
 
 ## Usage
 
