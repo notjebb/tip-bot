@@ -2,14 +2,10 @@ from sqlalchemy import create_engine, text, Table, Column, String, MetaData, ins
 from sqlalchemy_utils import database_exists, create_database
 from dotenv import dotenv_values
 
-config = dotenv_values(".env")
+config = dotenv_values("../.env")
 
 def init_db():
-    # engine = create_engine('postgresql://postgres:'+config['POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
-    engine = create_engine('postgresql://postgres:postgres@localhost:5432/dev_tip_bot_db')
-    # engine = create_engine('postgresql://postgres:'+config['JEFF_POSTGRES_PASSWORD']+'@localhost:5432/dev_tip_bot_db')
-
-
+    engine = create_engine('postgresql://postgres:postgres@postgres:5432/dev_tip_bot_db')
 
     if not database_exists(engine.url):
         create_database(engine.url)
@@ -61,9 +57,9 @@ def get_all_user(db):
         )
     return results.all()
 
-# db = init_db()
+db = init_db()
 # add_user_db(423205229723516948, config['0x61178E17Fac681a16eF47ed4B3527B95357b7D09'], db)
-# userInfo = get_user_db(423205229723516948, db)
-# print(userInfo)
+userInfo = get_user_db(423205229723516948, db)
+print(userInfo)
 # allUserInfo = get_all_user(db)
 # print(allUserInfo)

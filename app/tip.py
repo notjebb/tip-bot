@@ -3,24 +3,24 @@ from eth_account import Account
 import sys
 from dotenv import dotenv_values
 
-config = dotenv_values(".env")
+config = dotenv_values("../.env")
 
 w3 = Web3(Web3.HTTPProvider(config['FTM_TESTNET_RPC']))
 
 if not w3.isConnected():
     sys.exit("Connection Failed")
 
-def send(toAddr, fromAddr):
+def sendFtm(toAddr, fromAddr, amount):
     tx = {
         'to': Web3.toChecksumAddress(toAddr), 
-        'value':1000000000000000000,
+        'value':w3.toWei(str(amount),'eth'),
         'gas':80000, # gas limit 80,000
         'gasPrice': w3.toWei('200','gwei'),
         'nonce': w3.eth.getTransactionCount(fromAddr),
         'chainId': 0xfa2,
         }
 
-    key = config[fromAddr]
+    key = config[fromAddr]g
 
     signed_tx = w3.eth.account.sign_transaction(tx, key)
     print(f"{signed_tx.rawTransaction=}")
