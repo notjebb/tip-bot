@@ -36,12 +36,17 @@ def add_user_db(discord_id, private_key, db):
         )
 def get_user_db(discord_id, db):
     with db.connect() as connection:
+        
         results = connection.execute(
                     text("SELECT * FROM secrets where user_id = :user_id" ),
                     [{"user_id": str(discord_id)}]
-                  )
-
-    return results.all()[0] #should only return one tuple in a list
+                  ).all()
+    if(len(results) > 0):
+        print("user hase been found!")
+        return results[0] #should only return one tuple in a list
+    else:
+        print("No user hase been found!")
+        return False
 
 def delete_user_db(discord_id, db):
     with db.connect() as connection:

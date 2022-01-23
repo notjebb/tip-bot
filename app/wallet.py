@@ -6,7 +6,7 @@ import database_functions
 import requests
 
 #need to consider circular import issues
-config = dotenv_values(".env")
+config = dotenv_values("../.env")
 
 w3 = Web3(Web3.HTTPProvider(config['FTM_TESTNET_RPC']))
 
@@ -46,9 +46,9 @@ def get_account(id,db):
 #     return addr
 
 def get_ftm_balance(public_addr):
-    #https://api-testnet.ftmscan.com/api?module=account&action=balance&address=0x33e0e07ca86c869ade3fc9de9126f6c73dad105e&tag=latest&apikey=YourApiKeyToken
-    req = requests.get(f"https://api-testnet.ftmscan.com/api?module=account&action=balance&address={public_addr}&tag=latest&apikey={config['API_KEY']}")
-    bal = req.json()['result']
+    bal = w3.eth.getBalance(public_addr)
+    print(bal)
+    # bal = req.json()['result']
     
     return int(bal)/1000000000000000000
 
@@ -56,9 +56,10 @@ def on_join_wallet_create(user_id_list, db):
     new_wallets = {}
     for guild_member in user_id_list:
         #if an ID in the server member list does not already have a wallet in the DB
-        if not database_functions.get_user_db(guild_member, db):
+          user_wallet = database_functions.get_user_db(guild_member, db)
+          if user_wallet == False:
             #create a wallet for them
-            (priv_key, pub_key) = create_wallet()
+            (priv_key, _) = create_wallet()
             #insert ID (key) and Priv_key(value) in DB
             database_functions.add_user_db(guild_member, priv_key, db)
             new_wallets[str(guild_member)] = priv_key
@@ -68,6 +69,18 @@ def on_join_wallet_create(user_id_list, db):
     print(new_wallets)
     print(f"The DB now (test phase only):")
     print(database_functions.get_all_user(db))
+
+def on_user_join_wallet_create(user_id, db):
+    #if an ID in the server member list does not already have a wallet in the DB
+    user_wallet = database_functions.get_user_db(user_id, db)
+    if user_wallet == False:
+        #create a wallet for them
+        (priv_key, pub_key) = create_wallet()
+        #insert ID (key) and Priv_key(value) in DB
+        database_functions.add_user_db(user_id, priv_key, db)
+        print(f"A new user has joined the server and a wallet was made!")
+    else:
+        print(f"they already have a wallet in the system")
             
 
 

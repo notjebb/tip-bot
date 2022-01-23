@@ -5,7 +5,7 @@ from eth_account import Account
 import sys
 from dotenv import dotenv_values
 
-config = dotenv_values(".env")
+config = dotenv_values("../.env")
 
 w3 = Web3(Web3.HTTPProvider(config['FTM_TESTNET_RPC']))
 

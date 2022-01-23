@@ -38,11 +38,23 @@ async def on_guild_join(guild): #when the bot joins a new server, this is invoke
     #want to create wallet for all the IDs that are not currently in the DB
     #(OPTIONAL) store the IDs and member info in a separate table for whatever reason
 
+@bot.event
+async def on_member_join(member): #when someone joins the server, this is invoked
+    if not member.bot:
+        print("someone new has joined the server! Checking if they need a wallet created!\n")
+        wallet.on_user_join_wallet_create(member.id, db)
+        print("\n")
+    else:
+        print("we won't make wallets for bots")
+
 
 @bot.command()
 async def tip(context, payee:discord.Member, amount:float, token:str):
     #check if token type is supported
     print(f"{token=}")
+    if payee.bot:
+        await context.send(f"You cannot tip a bot")
+        return
     if amount <= 0:
         await context.send(f"Please don't be so stingy")
         return
@@ -81,14 +93,10 @@ async def balance(context, token='ftm'):
     
     await context.send(f"{balance=} and {user_account.address=}")
     
-
-
 #withdraw
 
 #deposit
 
 #help
-
-
 
 bot.run(os.getenv('BOT_TOKEN'))
