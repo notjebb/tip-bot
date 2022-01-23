@@ -5,9 +5,13 @@ This will be a tip bot I hope
 ## Installation
 
 To run in docker:
+
   `docker-compose build`
+  
   `docker-compose up -d`
+  
 Then attach your shell to the tipbot docker container. In vscode in the docker extension right click the tip-bot container and select attach shell. Otherwise run
+  
   `docker exec -it tipbot /bin/bash`
 
 ## Usage
