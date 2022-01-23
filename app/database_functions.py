@@ -41,7 +41,7 @@ def get_user_db(discord_id, db):
                     [{"user_id": str(discord_id)}]
                   )
 
-    return results.all()
+    return results.all()[0] #should only return one tuple in a list
 
 def delete_user_db(discord_id, db):
     with db.connect() as connection:
@@ -57,9 +57,13 @@ def get_all_user(db):
         )
     return results.all()
 
-# db = init_db()
-# add_user_db(1, "this is a test", db)
-# userInfo = get_user_db(1, db)
+db = init_db()
+#add_user_db(423205229723516948, config['0x61178E17Fac681a16eF47ed4B3527B95357b7D09'], db) already added
+# add_user_db(423205229723516948, config['0x61178E17Fac681a16eF47ed4B3527B95357b7D09'], db)
+# userInfo = get_user_db(423205229723516948, db)
 # print(userInfo)
-# allUserInfo = get_all_user(db)
+allUserInfo = get_all_user(db)
 # print(allUserInfo)
+
+for entry in allUserInfo:
+    print(entry)

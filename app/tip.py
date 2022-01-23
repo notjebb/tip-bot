@@ -20,7 +20,7 @@ def sendFtm(toAddr, fromAddr, amount):
         'chainId': 0xfa2,
         }
 
-    key = config[fromAddr]g
+    key = config[fromAddr]
 
     signed_tx = w3.eth.account.sign_transaction(tx, key)
     print(f"{signed_tx.rawTransaction=}")
