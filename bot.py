@@ -1,6 +1,6 @@
 from discord.ext import commands
 import discord
-import os, database_functions, tip
+import os, database_functions, tips, wallet
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -8,6 +8,8 @@ load_dotenv()
 bot_intents = discord.Intents.all()
 
 bot = commands.Bot(command_prefix='$', intents=bot_intents)
+
+supported_tokens = ['ftm']
 
 db = database_functions.init_db()
 
@@ -22,10 +24,15 @@ async def on_guild_join(guild): #when the bot joins a new server, this is invoke
     print("we joined a server!\n")
     print(f"{guild.id=}\t{guild.name=}\n")
     print(f"the member list is:\n")
+    id_list = []
     for member in guild.members:
         if member.bot:
             continue
-        print(f"{member.id}\t{member.name} #{member.discriminator}")
+        id_list.append(member.id)
+        # print(f"{member.id}\t{member.name} #{member.discriminator}")
+        # print(type(member.id))
+    #create wallets for new server
+    wallet.on_join_wallet_create(id_list, db)
     print("\n")
 
     #want to create wallet for all the IDs that are not currently in the DB
@@ -33,20 +40,48 @@ async def on_guild_join(guild): #when the bot joins a new server, this is invoke
 
 
 @bot.command()
-async def tip(context, payee:discord.Member, amount:int, token:str):
+async def tip(context, payee:discord.Member, amount:float, token:str):
+    #check if token type is supported
+    print(f"{token=}")
+    if amount <= 0:
+        await context.send(f"Please don't be so stingy")
+        return
+    token=token.lower()
+    if token not in supported_tokens:
+        await context.send(f"No support {token.upper()}, yet")
+        return
+    
+    #token is supported, check 
+    
+
     #if payee is not a Mention (in the same server), bot will error out - handle it as an event
     #check that the token is supported
     sender, receiver = context.author.id, payee.id
-    #check the author has enough $$$ for tipping, and gas, if not, insufficient funds embed
-    sender_query = database_functions.get_user_db(sender,db)
-    sender_addr = sender_query[0][1]
-    #check the receiver's existence in DB (optional)
-    receiver_query = database_functions.get_user_db(receiver,db)
-    receiver_addr = receiver_query[0][1]
-    #fetch related addressess / invoke the send
-    tx_hash = tip.send(receiver_addr, sender_addr) #need to add amount and token for this
 
-    await context.send(payee)
+    #check the author has enough $$$ for tipping, and gas, if not, insufficient funds embed
+    sender_acc, receiver_acc = wallet.get_account(sender, db), wallet.get_account(receiver, db)
+
+    print(f"{sender_acc.address=}, {sender_acc.address=}")
+
+    #check the receiver's existence in DB (optional)
+    # receiver_addr = wallet.get_key_from_id(receiver, db)
+
+    #fetch related addressess / invoke the send
+    tx_hash = tips.send(receiver_acc, sender_acc, amount) #need to add amount and token for this
+
+    await context.send(tx_hash)
+
+#balance
+@bot.command()
+async def balance(context, token='ftm'):
+    # 
+    user_account = wallet.get_account(context.author.id, db)
+    #ftm balance
+    balance = wallet.get_ftm_balance(user_account.address)
+    
+    await context.send(f"{balance=} and {user_account.address=}")
+    
+
 
 #withdraw
 
